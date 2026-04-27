@@ -3,7 +3,7 @@ import {
   ShieldCheck, Camera, FolderLock, SwitchCamera, Loader2, CameraOff,
   ZoomOut, ZoomIn, UserSquare2, FolderOutput, FolderKey, FolderSearch,
   Aperture, Images, Folder as FolderIcon, Grid, List, RefreshCw, Trash2,
-  Edit3, Sliders, X, Scissors, CheckCircle2, AlertCircle, FolderCheck
+  Edit3, Sliders, X, Scissors, CheckCircle2, AlertCircle, FolderCheck, RotateCcw
 } from 'lucide-react';
 
 const DB_NAME = 'PhotoAppDB';
@@ -704,22 +704,27 @@ export default function App() {
                   )}
               </div>
 
-              <div className="w-full mt-4 flex flex-col gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-200 relative z-30">
-                  <div className="flex items-center gap-3">
+              <div className="w-full mt-4 bg-white p-3 rounded-xl shadow-sm border border-gray-200 relative z-30 flex items-center justify-between gap-4">
+                  <div className="flex-1 flex items-center gap-2">
                       <ZoomOut className="w-4 h-4 text-gray-500 shrink-0" title="축소" />
-                      <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                      <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                       <ZoomIn className="w-4 h-4 text-gray-500 shrink-0" title="확대" />
                   </div>
-                  <div className="flex gap-4">
-                      <div className="flex-1 flex flex-col gap-1">
-                          <label className="flex justify-between text-xs font-medium text-gray-600"><span>밝기</span><span>{cameraBrightness}</span></label>
+                  <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex items-center gap-2 w-full">
+                          <label className="text-xs font-medium text-gray-600 w-8">밝기</label>
                           <input type="range" min="-50" max="50" value={cameraBrightness} onChange={(e) => setCameraBrightness(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                       </div>
-                      <div className="flex-1 flex flex-col gap-1">
-                          <label className="flex justify-between text-xs font-medium text-gray-600"><span>대비</span><span>{cameraContrast}</span></label>
+                  </div>
+                  <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex items-center gap-2 w-full">
+                          <label className="text-xs font-medium text-gray-600 w-8">대비</label>
                           <input type="range" min="-50" max="50" value={cameraContrast} onChange={(e) => setCameraContrast(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
                       </div>
                   </div>
+                  <button onClick={() => { setZoom(1); setCameraBrightness(0); setCameraContrast(0); }} className="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors rounded-lg flex-shrink-0" title="설정 초기화">
+                      <RotateCcw className="w-4 h-4" />
+                  </button>
               </div>
             </div>
           </div>
