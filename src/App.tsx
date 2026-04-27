@@ -183,7 +183,7 @@ export default function App() {
 
     try {
       currentStreamRef.current = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
+        video: { facingMode },
         audio: false,
       });
       setCameraPermOk(true);
