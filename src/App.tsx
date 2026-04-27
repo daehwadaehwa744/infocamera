@@ -39,6 +39,30 @@ async function getDBItem(key: string): Promise<any> {
   });
 }
 
+async function getUniqueFilename(baseName: string, currentItems: any[], dirHandle: any): Promise<string> {
+  const checkExists = async (name: string) => {
+    if (currentItems.some(item => item.name === name)) return true;
+    if (dirHandle) {
+      try {
+        await dirHandle.getFileHandle(name, { create: false });
+        // File exists physically
+        return true;
+      } catch (e: any) {
+        if (e.name === 'NotFoundError') return false;
+      }
+    }
+    return false;
+  };
+
+  let counter = 0;
+  let filename = `${baseName}.jpg`;
+  while (await checkExists(filename)) {
+    counter++;
+    filename = `${baseName}_${counter}.jpg`;
+  }
+  return filename;
+}
+
 async function verifyPermission(fileHandle: any, withUserGesture = false) {
   const opts = { mode: 'readwrite' };
   try {
@@ -348,7 +372,7 @@ export default function App() {
   const captureImage = () => {
     const name = memberName.trim() || '미상';
     const id = memberId.trim() || '0000-00000';
-    const filename = `${name}_${id}.jpg`;
+    const baseFilename = `${name}_${id}`;
 
     setFlash(true);
     setTimeout(() => setFlash(false), 200);
@@ -388,6 +412,8 @@ export default function App() {
     canvas.toBlob(async (blob) => {
       if (!blob) return showToast('이미지 처리 오류', 'error');
 
+      const filename = await getUniqueFilename(baseFilename, galleryItems, directoryHandle);
+
       if (directoryHandle) {
         try {
           const fileHandle = await directoryHandle.getFileHandle(filename, { create: true });
@@ -416,7 +442,7 @@ export default function App() {
 
   const saveEdit = () => {
     const namePart = editFilename.substring(0, editFilename.lastIndexOf('.')) || editFilename;
-    const newFilename = `${namePart}_제단.jpg`;
+    const baseFilename = `${namePart}_제단`;
 
     const editImage = editImageRef.current;
     const workArea = editWorkAreaRef.current;
@@ -443,6 +469,8 @@ export default function App() {
     tempCvs.toBlob(async (blob) => {
         if (!blob) return;
         
+        const newFilename = await getUniqueFilename(baseFilename, galleryItems, directoryHandle);
+
         if (directoryHandle) {
             try {
                 const fileH = await directoryHandle.getFileHandle(newFilename, { create: true });
@@ -641,13 +669,15 @@ export default function App() {
                   {flash && <div className="absolute inset-0 bg-white z-50 pointer-events-none transition-opacity duration-200 opacity-100" />}
 
                   <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
-                      <div ref={guideRef} className="guide-overlay border-2 border-white/80 absolute cursor-move pointer-events-auto" style={{ width: 240, height: 320, top: '10%', left: '50%', transform: guideRef.current?.style.transform?.includes('translate') ? 'translateX(-50%)' : 'none' }}>
-                          <div className="absolute inset-0 flex items-center justify-center opacity-30 pointer-events-none">
-                              <div className="w-full h-[1px] bg-white absolute"></div>
-                              <div className="h-full w-[1px] bg-white absolute"></div>
+                      <div ref={guideRef} className="guide-overlay border-[3px] border-green-400 absolute cursor-move pointer-events-auto" style={{ width: 240, height: 320, top: '10%', left: '50%', transform: guideRef.current?.style.transform?.includes('translate') ? 'translateX(-50%)' : 'none' }}>
+                          <div className="absolute inset-0 opacity-60 pointer-events-none">
+                              <div className="w-full h-[1px] bg-white absolute top-1/3"></div>
+                              <div className="w-full h-[1px] bg-white absolute top-2/3"></div>
+                              <div className="h-full w-[1px] bg-white absolute left-1/3"></div>
+                              <div className="h-full w-[1px] bg-white absolute left-2/3"></div>
                           </div>
-                          <div className="absolute top-0 left-0 w-full text-center mt-2 text-white/70 text-xs font-medium tracking-wider pointer-events-none drop-shadow-sm">드래그(이동) / 모서리(크기 조절)</div>
-                          <div className="resize-handle" ref={guideHandleRef}></div>
+                          <div className="absolute top-0 left-0 w-full text-center mt-2 text-white text-xs font-bold tracking-wider pointer-events-none drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">드래그(이동) / 모서리(크기 조절)</div>
+                          <div className="resize-handle hover:scale-125 transition-transform" ref={guideHandleRef}></div>
                       </div>
                   </div>
 
@@ -815,8 +845,14 @@ export default function App() {
                   <div ref={editWorkAreaRef} className="relative inline-block max-h-full max-w-full shadow-sm rounded overflow-hidden">
                       <img ref={editImageRef} src={editImageSrc} className="block max-h-full max-w-full pointer-events-none object-contain select-none" draggable={false} style={{ filter: `brightness(${100 + editBrightness}%) contrast(${100 + editContrast}%)` }} />
                       
-                      <div ref={editGuideRef} className="guide-overlay border-2 border-blue-400 absolute cursor-move pointer-events-auto" style={{ width: 150, height: 200, left: '10%', top: '10%' }}>
-                          <div className="resize-handle" ref={editGuideHandleRef}></div>
+                      <div ref={editGuideRef} className="guide-overlay border-[3px] border-blue-400 absolute cursor-move pointer-events-auto" style={{ width: 150, height: 200, left: '10%', top: '10%' }}>
+                          <div className="absolute inset-0 opacity-60 pointer-events-none">
+                              <div className="w-full h-[1px] bg-white absolute top-1/3"></div>
+                              <div className="w-full h-[1px] bg-white absolute top-2/3"></div>
+                              <div className="h-full w-[1px] bg-white absolute left-1/3"></div>
+                              <div className="h-full w-[1px] bg-white absolute left-2/3"></div>
+                          </div>
+                          <div className="resize-handle hover:scale-125 transition-transform" ref={editGuideHandleRef}></div>
                       </div>
                   </div>
               </div>
