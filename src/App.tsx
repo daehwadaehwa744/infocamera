@@ -83,6 +83,8 @@ export default function App() {
 
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>(() => (localStorage.getItem('cameraFacingMode') as 'user' | 'environment') || 'user');
   const [zoom, setZoom] = useState(1);
+  const [cameraBrightness, setCameraBrightness] = useState(0);
+  const [cameraContrast, setCameraContrast] = useState(0);
   const [isCameraLoading, setIsCameraLoading] = useState(true);
   const [showNoCameraFallback, setShowNoCameraFallback] = useState(false);
 
@@ -407,6 +409,7 @@ export default function App() {
     if (facingMode === 'user') sx = vw - (sx + sw);
 
     canvas.width = sw; canvas.height = sh;
+    ctx.filter = `brightness(${100 + cameraBrightness}%) contrast(${100 + cameraContrast}%)`;
     ctx.drawImage(video, sx, sy, sw, sh, 0, 0, sw, sh);
 
     canvas.toBlob(async (blob) => {
@@ -667,7 +670,7 @@ export default function App() {
                   <video 
                     ref={videoRef} 
                     className="absolute w-full h-full object-cover origin-center pointer-events-none" 
-                    style={{ transform: `scaleX(${facingMode === 'user' ? -1 : 1}) scale(${zoom})` }}
+                    style={{ transform: `scaleX(${facingMode === 'user' ? -1 : 1}) scale(${zoom})`, filter: `brightness(${100 + cameraBrightness}%) contrast(${100 + cameraContrast}%)` }}
                     autoPlay 
                     playsInline 
                   />
@@ -701,10 +704,22 @@ export default function App() {
                   )}
               </div>
 
-              <div className="w-full max-w-md mt-4 flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border border-gray-200 relative z-30">
-                  <ZoomOut className="w-5 h-5 text-gray-400" />
-                  <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
-                  <ZoomIn className="w-5 h-5 text-gray-400" />
+              <div className="w-full mt-4 flex flex-col gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-200 relative z-30">
+                  <div className="flex items-center gap-3">
+                      <ZoomOut className="w-4 h-4 text-gray-500 shrink-0" title="축소" />
+                      <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={(e) => setZoom(parseFloat(e.target.value))} className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                      <ZoomIn className="w-4 h-4 text-gray-500 shrink-0" title="확대" />
+                  </div>
+                  <div className="flex gap-4">
+                      <div className="flex-1 flex flex-col gap-1">
+                          <label className="flex justify-between text-xs font-medium text-gray-600"><span>밝기</span><span>{cameraBrightness}</span></label>
+                          <input type="range" min="-50" max="50" value={cameraBrightness} onChange={(e) => setCameraBrightness(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                      </div>
+                      <div className="flex-1 flex flex-col gap-1">
+                          <label className="flex justify-between text-xs font-medium text-gray-600"><span>대비</span><span>{cameraContrast}</span></label>
+                          <input type="range" min="-50" max="50" value={cameraContrast} onChange={(e) => setCameraContrast(parseInt(e.target.value))} className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600" />
+                      </div>
+                  </div>
               </div>
             </div>
           </div>
