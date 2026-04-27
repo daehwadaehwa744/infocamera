@@ -644,16 +644,22 @@ export default function App() {
                   <Camera className="w-5 h-5 text-blue-600" />
                   사진 촬영 (APC930U 16:9 비율)
               </h2>
-              <button onClick={() => {
-                setFacingMode(prev => {
-                  const newMode = prev === 'user' ? 'environment' : 'user';
-                  localStorage.setItem('cameraFacingMode', newMode);
-                  return newMode;
-                });
-                startCamera(true);
-              }} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-100 transition-colors shadow-sm" title="카메라 전환">
-                  <SwitchCamera className="w-5 h-5 text-gray-600" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={captureImage} className="p-2 flex items-center gap-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-sm px-4" title="사진 촬영 및 저장">
+                    <Aperture className="w-4 h-4" />
+                    <span className="text-sm font-bold hidden sm:inline">촬영</span>
+                </button>
+                <button onClick={() => {
+                  setFacingMode(prev => {
+                    const newMode = prev === 'user' ? 'environment' : 'user';
+                    localStorage.setItem('cameraFacingMode', newMode);
+                    return newMode;
+                  });
+                  startCamera(true);
+                }} className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-100 transition-colors shadow-sm" title="카메라 전환">
+                    <SwitchCamera className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
             </div>
           
             <div className="p-4 flex-1 flex flex-col items-center justify-center bg-gray-100 relative">
