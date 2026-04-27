@@ -642,7 +642,7 @@ export default function App() {
             <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
               <h2 className="text-lg font-semibold text-gray-700 flex items-center gap-2">
                   <Camera className="w-5 h-5 text-blue-600" />
-                  사진 촬영 (APC930U 16:9 비율)
+                  사진 촬영
               </h2>
               <div className="flex items-center gap-2">
                 <button onClick={captureImage} className="p-2 flex items-center gap-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors shadow-sm px-4" title="사진 촬영 및 저장">
@@ -663,7 +663,7 @@ export default function App() {
             </div>
           
             <div className="p-4 flex-1 flex flex-col items-center justify-center bg-gray-100 relative">
-              <div ref={containerRef} className="relative w-full aspect-video bg-black rounded-lg overflow-hidden shadow-inner flex items-center justify-center">
+              <div ref={containerRef} className="relative w-full aspect-[4/3] bg-black rounded-lg overflow-hidden shadow-inner flex items-center justify-center">
                   <video 
                     ref={videoRef} 
                     className="absolute w-full h-full object-cover origin-center pointer-events-none" 
@@ -756,7 +756,7 @@ export default function App() {
               </p>
             </div>
 
-            <button onClick={captureImage} className="mt-auto w-full flex items-center justify-center gap-2 px-4 py-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 font-bold text-lg transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-[0.98]">
+            <button onClick={captureImage} className="w-full flex items-center justify-center gap-2 px-4 py-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 font-bold text-lg transition-all shadow-md hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-300 active:scale-[0.98]">
               <Aperture className="w-6 h-6" />
               사진 촬영 및 저장
             </button>
