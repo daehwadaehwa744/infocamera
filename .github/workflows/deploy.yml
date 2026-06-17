@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          # 원래 있던 cache: 'npm' 줄을 삭제했습니다!
       - name: Install dependencies
         run: npm install
       - name: Build
